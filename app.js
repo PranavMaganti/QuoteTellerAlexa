@@ -61,7 +61,7 @@ function requestVerifier(req, res, next) {
     );
 }
 function getQuote(callback){
-  var path = "/quotes"
+  var path = "/inspiration"
   var ref = database.ref(path)
   ref.on('value', gotData, errData)
 
