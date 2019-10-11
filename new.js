@@ -10,6 +10,7 @@ const QuoteHandler = {
         return input.requestEnvelope.request.type === "InspirationalIntent";
     },
     handle(input) {
+        console.log(input)
         getQuote (function(quote) {
             return input.responseBuilder
             .speak(quote)
