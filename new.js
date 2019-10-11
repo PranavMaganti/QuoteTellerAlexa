@@ -1,9 +1,14 @@
 const Alexa = require("ask-sdk-core");
 const Request = require("request-promise");
 
-const appId = "amzn1.ask.skill.c95db360-7a17-4118-99fa-6048917e8fda";
 
-var skill;
+exports.handler = function(event, context, callback) {
+    const alexa = Alexa.handler(event, context, callback);
+
+    alexa.appId = "amzn1.ask.skill.c95db360-7a17-4118-99fa-6048917e8fda" // APP_ID is your skill id which can be found in the Amazon developer console where you create the skill.
+    alexa.registerHandlers(QuoteHandler);
+    alexa.execute();
+};
 
 const QuoteHandler = {
     canHandle(input) {
@@ -21,20 +26,12 @@ const QuoteHandler = {
     }
 }
 
-exports.handler = async (event, context) => { 
-    
-    if(!skill) {
-        skill = Alexa.SkillBuilders.custom()
-            .addRequestHandlers(
-                QuoteHandler 
-            )
-            .addErrorHandlers(ErrorHandler)
-            .create();
-    }
-    var response = await skill.invoke(event, context);
-    return response;
-    
-};
+const skill = Alexa.SkillBuilders.custom()
+  .addRequestHandlers(
+    QuoteHandler)
+  .create();
+
+
 
 function getQuote(callback){
     var path = "/quotes"
