@@ -1,4 +1,5 @@
 const Alexa = require('ask-sdk-core');
+Alexa.appid
 let skill;
 
 // Development environment - we are on our local node server
@@ -41,6 +42,7 @@ app.post('/', function (req, res) {
 
     if (!skill) {
         skill = Alexa.SkillBuilders.custom()
+            .withSkillId("amzn1.ask.skill.c95db360-7a17-4118-99fa-6048917e8fda")
             .addRequestHandlers(
                 QuoteHandler
             )
