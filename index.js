@@ -2,12 +2,8 @@ const Alexa = require('ask-sdk-core');
 const movieQuotes = require('movie-quotes');
 const famousQuotes = require('quotes-go');
 const quoteOfTheDay = require("./quotes")
-const verifier = require('alexa-verifier')
+const { ExpressAdapter } = require('ask-sdk-express-adapter');
 
-
-
-Alexa.appid
-let skill;
 
 // Development environment - we are on our local node server
 const express = require('express');
@@ -15,7 +11,11 @@ const bodyParser = require('body-parser');
 const app = express();
 const firebase = require("firebase");
 
-var PORT = process.env.PORT || 80;
+const skillBuilder = Alexa.SkillBuilders.custom();
+const skill = skillBuilder.create();
+const adapter = new ExpressAdapter(skill, true, true);
+
+var PORT = process.env.PORT || 5000;
 
 var config = {
     apiKey: "AIzaSyCqUX77dqVfcrTyccb2BoMmwOXAvDSWMJk",
@@ -83,6 +83,7 @@ const SessionEndedHandler = {
     handle(input) {
         return input.responseBuilder
             .speak("Thanks for using Quote Teller. Hope to see you again soon!")
+            .withShouldEndSession(true)
             .getResponse();
     }
 }
@@ -102,35 +103,26 @@ const LaunchHandler = {
 
 
 app.use(bodyParser.json());
-app.post('/', function (req, res) {
-    verifier(cert_url, signature, requestRawBody, function callbackFn(er) {
-        if (er === null) {
-            if (!skill) {
-                skill = Alexa.SkillBuilders.custom()
-                    .withSkillId("amzn1.ask.skill.c95db360-7a17-4118-99fa-6048917e8fda")
-                    .addRequestHandlers(
-                        QuoteHandler,
-                        LaunchHandler,
-                        SessionEndedHandler
-                    )
-                    .create();
-            }
-        
-            skill.invoke(req.body)
-                .then(function (responseBody) {
-                    res.json(responseBody);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                    res.status(500).send('Error during the request');
-                });
-          } else {
-            res.status(400);
-            res.send('Bad request');
-            }
-        } )
+app.post('/', adapter.getRequestHandlers(), function (req, res) {
+
+    skill = skillBuilder
+        .withSkillId("amzn1.ask.skill.c95db360-7a17-4118-99fa-6048917e8fda")
+        .addRequestHandlers(
+            QuoteHandler,
+            LaunchHandler,
+            SessionEndedHandler
+        )
+        .create();
 
 
+    skill.invoke(req.body)
+        .then(function (responseBody) {
+            res.json(responseBody);
+        })
+        .catch(function (error) {
+            console.log(error);
+            res.status(500).send('Error during the request');
+        })
 });
 
 
