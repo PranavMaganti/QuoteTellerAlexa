@@ -30,9 +30,12 @@ var config = {
 
 const QuoteHandler = {
     canHandle(input) {
-        return Alexa.getRequestType(input.requestEnvelope) === 'IntentRequest' ||
-        Alexa.getIntentName(input.requestEnvelope) === "QuoteIntent" 
-        || Alexa.getIntentName(input.requestEnvelope) === "AMAZON.YesIntent";
+        if (Alexa.getRequestType(input.requestEnvelope) === 'IntentRequest') {
+            return Alexa.getIntentName(input.requestEnvelope) === "QuoteIntent" 
+            || Alexa.getIntentName(input.requestEnvelope) === "AMAZON.YesIntent";
+        } else {
+            return false
+        }        
     },
     async handle(input) {
         let quoteType 
