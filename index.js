@@ -2,6 +2,8 @@ const Alexa = require('ask-sdk-core');
 const movieQuotes = require('movie-quotes');
 const famousQuotes = require('quotes-go');
 const quoteOfTheDay = require("./quotes")
+const verifier = require('alexa-verifier')
+
 
 
 Alexa.appid
@@ -101,25 +103,34 @@ const LaunchHandler = {
 
 app.use(bodyParser.json());
 app.post('/', function (req, res) {
-    if (!skill) {
-        skill = Alexa.SkillBuilders.custom()
-            .withSkillId("amzn1.ask.skill.c95db360-7a17-4118-99fa-6048917e8fda")
-            .addRequestHandlers(
-                QuoteHandler,
-                LaunchHandler,
-                SessionEndedHandler
-            )
-            .create();
-    }
+    verifier(cert_url, signature, requestRawBody, function callbackFn(er) {
+        if (er === null) {
+            if (!skill) {
+                skill = Alexa.SkillBuilders.custom()
+                    .withSkillId("amzn1.ask.skill.c95db360-7a17-4118-99fa-6048917e8fda")
+                    .addRequestHandlers(
+                        QuoteHandler,
+                        LaunchHandler,
+                        SessionEndedHandler
+                    )
+                    .create();
+            }
+        
+            skill.invoke(req.body)
+                .then(function (responseBody) {
+                    res.json(responseBody);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    res.status(500).send('Error during the request');
+                });
+          } else {
+            res.status(400);
+            res.send('Bad request');
+            }
+        } )
 
-    skill.invoke(req.body)
-        .then(function (responseBody) {
-            res.json(responseBody);
-        })
-        .catch(function (error) {
-            console.log(error);
-            res.status(500).send('Error during the request');
-        });
+
 });
 
 
