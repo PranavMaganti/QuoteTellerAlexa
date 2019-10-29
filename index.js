@@ -7,7 +7,6 @@ const { ExpressAdapter } = require('ask-sdk-express-adapter');
 
 // Development environment - we are on our local node server
 const express = require('express');
-const bodyParser = require('body-parser');
 const app = express();
 const firebase = require("firebase");
 
@@ -76,7 +75,7 @@ const QuoteHandler = {
 const SessionEndedHandler = {
     canHandle(input) {
         return Alexa.getRequestType(input.requestEnvelope) === 'SessionEndedRequest' ||
-        Alexa.getRequestType(input.requestEnvelope) === 'AMAZON.StopIntent';
+        Alexa.getIntentName(input.requestEnvelope) === 'AMAZON.StopIntent';
     },
     handle(input) {
         return input.responseBuilder
@@ -174,5 +173,3 @@ const adapter = new ExpressAdapter(skill, true, true);
 
 app.post('/', adapter.getRequestHandlers())
 app.listen(PORT)
-
-
