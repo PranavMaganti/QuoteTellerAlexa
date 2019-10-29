@@ -13,7 +13,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const firebase = require("firebase");
 
-var PORT = 5000;
+var PORT = process.env.PORT || 80;
 
 var config = {
     apiKey: "AIzaSyCqUX77dqVfcrTyccb2BoMmwOXAvDSWMJk",
