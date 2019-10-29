@@ -89,7 +89,9 @@ const LaunchHandler = {
     handle(input) {
         return input.responseBuilder
             .speak('Welcome to quote teller. You can ask for an inspirational quote, a movie quote, a famous quote or even the quote of the day.')
-            .getResponse();
+            .withShouldEndSession(false)
+            .getResponse()
+            
     }
 }
 
