@@ -11,7 +11,14 @@ const bodyParser = require('body-parser');
 const app = express();
 const firebase = require("firebase");
 
-const skillBuilder = Alexa.SkillBuilders.custom();
+const skillBuilder = Alexa.SkillBuilders.custom()
+    .withSkillId("amzn1.ask.skill.c95db360-7a17-4118-99fa-6048917e8fda")
+    .addRequestHandlers(
+        QuoteHandler,
+        LaunchHandler,
+        SessionEndedHandler
+    )
+.create();
 const skill = skillBuilder.create();
 const adapter = new ExpressAdapter(skill, true, true);
 
@@ -103,27 +110,7 @@ const LaunchHandler = {
 
 
 app.use(bodyParser.json());
-app.post('/', adapter.getRequestHandlers(), function (req, res) {
-
-    skill = skillBuilder
-        .withSkillId("amzn1.ask.skill.c95db360-7a17-4118-99fa-6048917e8fda")
-        .addRequestHandlers(
-            QuoteHandler,
-            LaunchHandler,
-            SessionEndedHandler
-        )
-        .create();
-
-
-    skill.invoke(req.body)
-        .then(function (responseBody) {
-            res.json(responseBody);
-        })
-        .catch(function (error) {
-            console.log(error);
-            res.status(500).send('Error during the request');
-        })
-});
+app.post('/', adapter.getRequestHandlers())
 
 
 async function getInspirationalQuote() {
