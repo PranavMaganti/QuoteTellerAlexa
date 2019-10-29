@@ -51,10 +51,10 @@ const QuoteHandler = {
         let speech
         let heading
         if (quoteType == "quote of the day") {
-            speech = quote + ". Would you like to hear another " + quoteType + "."
+            speech = quote + ". Would you like to hear another " + quoteType + "?"
             heading = capitaliseFirstLetter(quoteType)
         } else {
-            speech = quote + ". Would you like to hear another " + quoteType + " quote."
+            speech = quote + ". Would you like to hear another " + quoteType + " quote?"
             heading = capitaliseFirstLetter(quoteType) + " Quote"
         }
 
