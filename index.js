@@ -99,21 +99,6 @@ const LaunchHandler = {
     }
 }
 
-const skillBuilder = Alexa.SkillBuilders.custom()
-    .withSkillId("amzn1.ask.skill.c95db360-7a17-4118-99fa-6048917e8fda")
-    .addRequestHandlers(
-        QuoteHandler,
-        LaunchHandler,
-        SessionEndedHandler
-    )
-const skill = skillBuilder.create();
-const adapter = new ExpressAdapter(skill, true, true);
-
-
-app.use(bodyParser.json());
-app.post('/', adapter.getRequestHandlers())
-
-
 async function getInspirationalQuote() {
     var path = "/quotes"
     var ref = database.ref(path)
@@ -132,7 +117,6 @@ async function getInspirationalQuote() {
         
 }
 
-app.listen(PORT)
 
 function lowerFirstLetter(string) {
     return string.charAt(0).toLowerCase() + string.slice(1);
@@ -177,4 +161,18 @@ async function getQuoteOfTheDay() {
     var quote = await quoteOfTheDay()
     return [quote.quote.body, quote.quote.author]
 }
+
+const skillBuilder = Alexa.SkillBuilders.custom()
+    .withSkillId("amzn1.ask.skill.c95db360-7a17-4118-99fa-6048917e8fda")
+    .addRequestHandlers(
+        QuoteHandler,
+        LaunchHandler,
+        SessionEndedHandler
+    )
+const skill = skillBuilder.create();
+const adapter = new ExpressAdapter(skill, true, true);
+
+app.post('/', adapter.getRequestHandlers())
+app.listen(PORT)
+
 
