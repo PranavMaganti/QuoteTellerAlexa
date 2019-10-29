@@ -82,6 +82,18 @@ const SessionEndedHandler = {
     }
 }
 
+const LaunchHandler = {
+    canHandle(input) {
+        return Alexa.getRequestType(input.requestEnvelope) === 'LaunchRequest';
+    },
+    handle(input) {
+        return input.responseBuilder
+            .speak('Welcome to quote teller. You can ask for an inspirational quote, a movie quote, a famous quote or even the quote of the day.')
+            .getResponse();
+    }
+}
+
+
 app.use(bodyParser.json());
 app.post('/', function (req, res) {
     if (!skill) {
@@ -89,6 +101,7 @@ app.post('/', function (req, res) {
             .withSkillId("amzn1.ask.skill.c95db360-7a17-4118-99fa-6048917e8fda")
             .addRequestHandlers(
                 QuoteHandler,
+                LaunchHandler,
                 SessionEndedHandler
             )
             .create();
