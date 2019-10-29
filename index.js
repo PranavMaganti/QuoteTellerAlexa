@@ -40,7 +40,7 @@ const QuoteHandler = {
         if (Alexa.getIntentName(input.requestEnvelope) === "AMAZON.YesIntent") {
             quoteType = sessionAttributes.quoteType 
         } else {
-            quoteType = capitaliseFirstLetter(Alexa.getSlotValue(input.requestEnvelope, "quoteType"))
+            quoteType = lowerFirstLetter(Alexa.getSlotValue(input.requestEnvelope, "quoteType"))
         }
 
         sessionAttributes.quoteType = quoteType
@@ -48,17 +48,20 @@ const QuoteHandler = {
 
         
         var quote = await getQuote(quoteType) 
+        let speech
+        let heading
         if (quoteType == "quote of the day") {
-            quote += ". Would you like to hear another " + quoteType + "."
+            speech = quote + ". Would you like to hear another " + quoteType + "."
+            heading = capitaliseFirstLetter(quoteType)
         } else {
-            quote += ". Would you like to hear another " + quoteType + " quote."
+            speech = quote + ". Would you like to hear another " + quoteType + " quote."
+            heading = capitaliseFirstLetter(quoteType) + " Quote"
         }
 
-        var heading = quoteType + " Quote"
         var repromptText = "You can ask for an inspirational quote, a movie quote, a famous quote or even the quote of the day."
 
         var res = input.responseBuilder
-        .speak(quote)
+        .speak(speech)
         .withSimpleCard(heading, quote)
         .reprompt(repromptText)
         .getResponse()
@@ -122,9 +125,14 @@ async function getInspirationalQuote() {
 
 app.listen(PORT)
 
-function capitaliseFirstLetter(string) {
+function lowerFirstLetter(string) {
     return string.charAt(0).toLowerCase() + string.slice(1);
 }
+
+function capitaliseFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 
 async function getQuote(quoteType) {
     var quote = ""
