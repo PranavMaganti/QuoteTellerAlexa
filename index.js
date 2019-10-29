@@ -11,16 +11,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const firebase = require("firebase");
 
-const skillBuilder = Alexa.SkillBuilders.custom()
-    .withSkillId("amzn1.ask.skill.c95db360-7a17-4118-99fa-6048917e8fda")
-    .addRequestHandlers(
-        QuoteHandler,
-        LaunchHandler,
-        SessionEndedHandler
-    )
-.create();
-const skill = skillBuilder.create();
-const adapter = new ExpressAdapter(skill, true, true);
+
 
 var PORT = process.env.PORT || 5000;
 
@@ -107,6 +98,16 @@ const LaunchHandler = {
             
     }
 }
+
+const skillBuilder = Alexa.SkillBuilders.custom()
+    .withSkillId("amzn1.ask.skill.c95db360-7a17-4118-99fa-6048917e8fda")
+    .addRequestHandlers(
+        QuoteHandler,
+        LaunchHandler,
+        SessionEndedHandler
+    )
+const skill = skillBuilder.create();
+const adapter = new ExpressAdapter(skill, true, true);
 
 
 app.use(bodyParser.json());
