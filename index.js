@@ -75,7 +75,8 @@ const QuoteHandler = {
 const SessionEndedHandler = {
     canHandle(input) {
         return Alexa.getRequestType(input.requestEnvelope) === 'SessionEndedRequest' ||
-        Alexa.getIntentName(input.requestEnvelope) === 'AMAZON.StopIntent';
+        Alexa.getIntentName(input.requestEnvelope) === 'AMAZON.StopIntent' ||
+        Alexa.getIntentName(input.requestEnvelope) === 'AMAZON.NoIntent';
     },
     handle(input) {
         return input.responseBuilder
