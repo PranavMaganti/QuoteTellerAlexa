@@ -15,13 +15,14 @@ const firebase = require("firebase");
 var PORT = process.env.PORT || 5000;
 
 var config = {
-    apiKey: "AIzaSyCqUX77dqVfcrTyccb2BoMmwOXAvDSWMJk",
-    authDomain: "inspirationalquotes-9c91d.firebaseapp.com",
-    databaseURL: "https://inspirationalquotes-9c91d.firebaseio.com",
-    projectId: "inspirationalquotes-9c91d",
-    storageBucket: "inspirationalquotes-9c91d.appspot.com",
-    messagingSenderId: "461152347598"
+    apiKey: process.env.apiKey,
+    authDomain: process.env.authDomain,
+    databaseURL: process.env.databaseURL,
+    projectId: process.env.projectId,
+    storageBucket: process.env.storageBucket,
+    messagingSenderId: process.env.messagingSenderId
   };
+  
  
  firebase.initializeApp(config);
  var database = firebase.database()
@@ -128,22 +129,23 @@ function capitaliseFirstLetter(string) {
 
 
 async function getQuote(quoteType) {
-    var quote = ""
-    if (quoteType == "inspirational") {
-        quote = await getInspirationalQuote() 
-    } else if (quoteType == "movie") {
-        quote = addHyphen(movieQuotes.random())
-    } else if (quoteType == "famous") {
-        var rawQuote = famousQuotes.getRandomQuote()
-        quote = '"' + rawQuote.text + '" - ' +  rawQuote.author.name
-    }  else if (quoteType == "quote of the day") {
-        var values = await getQuoteOfTheDay()
-        var rawQuote = values[0]
-        var author = values[1]
-        quote = '"' + rawQuote + '" - ' + author
-    } else {
-        quote = "No such quote was found. Please try again later."
-    }
+    var quote = (function(quoteType) { 
+        switch (quoteType) {
+            case "inspirational":
+                return await getInspirationalQuote() 
+            case "movie":
+                return addHyphen(movieQuotes.random())
+            case "famous":
+                var rawQuote = famousQuotes.getRandomQuote()
+                return '"' + rawQuote.text + '" - ' +  rawQuote.author.name
+            case "quote of the day":
+                var values = await getQuoteOfTheDay()
+                return '"' + values[0] + '" - ' + values[1]
+            default:
+                return "No such quote was found. Please try again later."
+
+        }
+    })(quoteType)
 
     return quote
 }
