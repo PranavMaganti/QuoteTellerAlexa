@@ -108,9 +108,9 @@ const HelpHandler: Alexa.RequestHandler = {
     return intentName === 'AMAZON.HelpIntent';
   }, handle(input: Alexa.HandlerInput): Alexa.ResponseFactory {
     return input.responseBuilder
-        .speak(`To request a quote just say, tell me a, followed by the 
-      quote type. You can ask for an inspirational quote, a movie quote, 
-      a famous quote or even the quote of the day.`)
+      .speak(`To request a quote just say, "tell me a movie quote". 
+        You can ask for an inspirational quote, a movie quote, a 
+        famous quote or even the quote of the day.`)
         .withShouldEndSession(false)
         .getResponse();
   },
