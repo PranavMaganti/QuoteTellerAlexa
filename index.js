@@ -129,7 +129,7 @@ function capitaliseFirstLetter(string) {
 
 
 async function getQuote(quoteType) {
-    var quote = (function(quoteType) { 
+    var quote = ( async function(quoteType) { 
         switch (quoteType) {
             case "inspirational":
                 return await getInspirationalQuote() 
