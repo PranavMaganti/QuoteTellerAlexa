@@ -72,9 +72,8 @@ const QuoteHandler: Alexa.RequestHandler = {
   },
 };
 
-const SessionEndedHandler: Alexa.RequestHandler = {
+const SessionStopedHandler: Alexa.RequestHandler = {
   canHandle(input: Alexa.HandlerInput): boolean {
-    const reqType = Alexa.getRequestType(input.requestEnvelope);
     const intentName = Alexa.getIntentName(input.requestEnvelope);
     return intentName === 'AMAZON.StopIntent' ||
       intentName === 'AMAZON.NoIntent' ||
@@ -107,12 +106,22 @@ const HelpHandler: Alexa.RequestHandler = {
     return intentName === 'AMAZON.HelpIntent';
   }, handle(input: Alexa.HandlerInput): Alexa.ResponseFactory {
     return input.responseBuilder
-      .speak(`To request a quote just say, "tell me a", followed by the quote
+        .speak(`To request a quote just say, "tell me a", followed by the quote
         type. For example for an inspirational quote you can say,
         "tell me an inspirational quote". You can also ask for a movie quote,
         a famous quote or even the quote of the day.`)
         .withShouldEndSession(false)
         .getResponse();
+  },
+};
+
+const SessionEndedRequestHandler = {
+  canHandle(handlerInput) {
+    const requestType = Alexa.getRequestType(handlerInput.requestEnvelope);
+    return requestType === 'SessionEndedRequest';
+  },
+  handle(handlerInput) {
+    return handlerInput.responseBuilder.getResponse();
   },
 };
 
@@ -208,8 +217,9 @@ const skillBuilder = Alexa.SkillBuilders.custom()
     .addRequestHandlers(
         QuoteHandler,
         LaunchHandler,
-        SessionEndedHandler,
-        HelpHandler
+        SessionStopedHandler,
+        HelpHandler,
+        SessionEndedRequestHandler,
     );
 const skill = skillBuilder.create();
 const adapter = new ExpressAdapter(skill, true, true);
