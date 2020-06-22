@@ -76,7 +76,7 @@ const SessionEndedHandler: Alexa.RequestHandler = {
   canHandle(input: Alexa.HandlerInput): boolean {
     const reqType = Alexa.getRequestType(input.requestEnvelope);
     const intentName = Alexa.getIntentName(input.requestEnvelope);
-    console.log(reqType);
+    console.log(input.requestEnvelope);
     return reqType === 'SessionEndedRequest' ||
       intentName === 'AMAZON.StopIntent' ||
       intentName === 'AMAZON.NoIntent' ||
