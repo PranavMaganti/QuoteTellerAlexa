@@ -115,13 +115,22 @@ const HelpHandler: Alexa.RequestHandler = {
   },
 };
 
-const SessionEndedRequestHandler = {
-  canHandle(handlerInput) {
-    const requestType = Alexa.getRequestType(handlerInput.requestEnvelope);
+const SessionEndedRequestHandler: Alexa.RequestHandler = {
+  canHandle(input: Alexa.HandlerInput): boolean {
+    const requestType = Alexa.getRequestType(input.requestEnvelope);
     return requestType === 'SessionEndedRequest';
   },
-  handle(handlerInput) {
-    return handlerInput.responseBuilder.getResponse();
+  handle(input: Alexa.HandlerInput): Alexa.ResponseFactory {
+    return input.responseBuilder.getResponse();
+  },
+};
+
+const ErrorHandler: Alexa.ErrorHandler = {
+  canHandle(): boolean {
+    return true;
+  },
+  handle(input: Alexa.HandlerInput): Alexa.ResponseFactory {
+    return input.responseBuilder.getResponse();
   },
 };
 
@@ -220,7 +229,7 @@ const skillBuilder = Alexa.SkillBuilders.custom()
         SessionStopedHandler,
         HelpHandler,
         SessionEndedRequestHandler,
-    );
+    ).addErrorHandlers(ErrorHandler);
 const skill = skillBuilder.create();
 const adapter = new ExpressAdapter(skill, true, true);
 
