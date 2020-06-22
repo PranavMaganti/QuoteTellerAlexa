@@ -1,16 +1,12 @@
-const Alexa = require('ask-sdk-core');
-const movieQuotes = require('movie-quotes');
-const famousQuotes = require('quotes-go');
-const quoteOfTheDay = require("./quotes")
-const { ExpressAdapter } = require('ask-sdk-express-adapter');
+import * as Alexa from 'ask-sdk-core';
+import * as movieQuotes from 'movie-quotes'
+import * as famousQuotes from 'quotes-go'
+import { ExpressAdapter } from 'ask-sdk-express-adapter';
+import * as firebase from 'firebase'
+import express from 'express'
+import { quoteOfTheDay, Quote } from './quotes';
 
-
-// Development environment - we are on our local node server
-const express = require('express');
 const app = express();
-const firebase = require("firebase");
-
-
 
 var PORT = process.env.PORT || 5000;
 
@@ -28,8 +24,8 @@ var config = {
  var database = firebase.database()
 
 
-const QuoteHandler = {
-    canHandle(input) {
+const QuoteHandler: Alexa.RequestHandler = {
+    canHandle(input: Alexa.HandlerInput):boolean {
         if (Alexa.getRequestType(input.requestEnvelope) === 'IntentRequest') {
             return Alexa.getIntentName(input.requestEnvelope) === "QuoteIntent" 
             || Alexa.getIntentName(input.requestEnvelope) === "AMAZON.YesIntent";
@@ -37,8 +33,8 @@ const QuoteHandler = {
             return false
         }        
     },
-    async handle(input) {
-        let quoteType 
+    async handle(input: Alexa.HandlerInput): Promise<Alexa.ResponseFactory> {
+        let quoteType: string
         const sessionAttributes = input.attributesManager.getSessionAttributes()
         if (Alexa.getIntentName(input.requestEnvelope) === "AMAZON.YesIntent") {
             quoteType = sessionAttributes.quoteType 
@@ -51,8 +47,8 @@ const QuoteHandler = {
 
         
         var quote = await getQuote(quoteType) 
-        let speech
-        let heading
+        let speech: string
+        let heading: string
         if (quoteType == "quote of the day") {
             speech = quote + ". Would you like to hear another " + quoteType + "?"
             heading = capitaliseFirstLetter(quoteType)
@@ -73,13 +69,13 @@ const QuoteHandler = {
     }
 }
 
-const SessionEndedHandler = {
-    canHandle(input) {
+const SessionEndedHandler: Alexa.RequestHandler = {
+    canHandle(input: Alexa.HandlerInput): boolean {
         return Alexa.getRequestType(input.requestEnvelope) === 'SessionEndedRequest' ||
         Alexa.getIntentName(input.requestEnvelope) === 'AMAZON.StopIntent' ||
         Alexa.getIntentName(input.requestEnvelope) === 'AMAZON.NoIntent';
     },
-    handle(input) {
+    handle(input: Alexa.HandlerInput): Alexa.ResponseFactory {
         return input.responseBuilder
             .speak("Thanks for using Quote Teller. Hope to see you again soon!")
             .withShouldEndSession(true)
@@ -87,20 +83,19 @@ const SessionEndedHandler = {
     }
 }
 
-const LaunchHandler = {
-    canHandle(input) {
+const LaunchHandler: Alexa.RequestHandler = {
+    canHandle(input: Alexa.HandlerInput): boolean {
         return Alexa.getRequestType(input.requestEnvelope) === 'LaunchRequest';
     },
-    handle(input) {
+    handle(input: Alexa.HandlerInput): Alexa.ResponseFactory {
         return input.responseBuilder
             .speak('Welcome to quote teller. You can ask for an inspirational quote, a movie quote, a famous quote or even the quote of the day.')
             .withShouldEndSession(false)
             .getResponse()
-            
     }
 }
 
-async function getInspirationalQuote() {
+async function getInspirationalQuote(): Promise<string> {
     var path = "/quotes"
     var ref = database.ref(path)
     var quote = ref.once('value').then(
@@ -119,16 +114,16 @@ async function getInspirationalQuote() {
 }
 
 
-function lowerFirstLetter(string) {
-    return string.charAt(0).toLowerCase() + string.slice(1);
+function lowerFirstLetter(str: string): string {
+    return str.charAt(0).toLowerCase() + str.slice(1);
 }
 
-function capitaliseFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
+function capitaliseFirstLetter(str: string): string {
+    return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 
-async function getQuote(quoteType) {
+async function getQuote(quoteType: string): Promise<string> {
     var quote = ( async function(quoteType) { 
         switch (quoteType) {
             case "inspirational":
@@ -150,7 +145,7 @@ async function getQuote(quoteType) {
     return quote
 }
 
-function addHyphen(quote) {
+function addHyphen(quote: string): string {
     var indexOfQ = quote.indexOf('"', 1);
     var person = quote.slice(indexOfQ+1)
     var text = quote.slice(0,indexOfQ+1)
@@ -159,9 +154,9 @@ function addHyphen(quote) {
 
 }
 
-async function getQuoteOfTheDay() {
-    var quote = await quoteOfTheDay()
-    return [quote.quote.body, quote.quote.author]
+async function getQuoteOfTheDay(): Promise<Array<string>> {
+    var quote: Quote = await quoteOfTheDay()
+    return [quote.body, quote.author]
 }
 
 const skillBuilder = Alexa.SkillBuilders.custom()
