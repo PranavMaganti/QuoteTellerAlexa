@@ -76,9 +76,7 @@ const SessionEndedHandler: Alexa.RequestHandler = {
   canHandle(input: Alexa.HandlerInput): boolean {
     const reqType = Alexa.getRequestType(input.requestEnvelope);
     const intentName = Alexa.getIntentName(input.requestEnvelope);
-    console.log(input.requestEnvelope);
-    return reqType === 'SessionEndedRequest' ||
-      intentName === 'AMAZON.StopIntent' ||
+    return intentName === 'AMAZON.StopIntent' ||
       intentName === 'AMAZON.NoIntent' ||
       intentName === 'AMAZON.CancelIntent';
   },
@@ -211,7 +209,7 @@ const skillBuilder = Alexa.SkillBuilders.custom()
         QuoteHandler,
         LaunchHandler,
         SessionEndedHandler,
-        HelpHandler,
+        HelpHandler
     );
 const skill = skillBuilder.create();
 const adapter = new ExpressAdapter(skill, true, true);
