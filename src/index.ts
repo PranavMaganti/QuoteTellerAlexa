@@ -78,7 +78,8 @@ const SessionEndedHandler: Alexa.RequestHandler = {
     const intentName = Alexa.getIntentName(input.requestEnvelope);
     return reqType === 'SessionEndedRequest' ||
       intentName === 'AMAZON.StopIntent' ||
-      intentName === 'AMAZON.NoIntent';
+      intentName === 'AMAZON.NoIntent' ||
+      intentName === 'AMAZON.CancelIntent';
   },
   handle(input: Alexa.HandlerInput): Alexa.ResponseFactory {
     return input.responseBuilder
@@ -100,6 +101,21 @@ const LaunchHandler: Alexa.RequestHandler = {
         .getResponse();
   },
 };
+
+const HelpHandler: Alexa.RequestHandler = {
+  canHandle(input: Alexa.HandlerInput): boolean {
+    const intentName = Alexa.getIntentName(input.requestEnvelope);
+    return intentName === 'AMAZON.HelpIntent';
+  }, handle(input: Alexa.HandlerInput): Alexa.ResponseFactory {
+    return input.responseBuilder
+        .speak(`To request a quote just say, tell me a, followed by the 
+      quote type. You can ask for an inspirational quote, a movie quote, 
+      a famous quote or even the quote of the day.`)
+        .withShouldEndSession(false)
+        .getResponse();
+  },
+};
+
 
 /**
  * Gets a random inspirational quote from the firebase database
@@ -193,6 +209,7 @@ const skillBuilder = Alexa.SkillBuilders.custom()
         QuoteHandler,
         LaunchHandler,
         SessionEndedHandler,
+        HelpHandler,
     );
 const skill = skillBuilder.create();
 const adapter = new ExpressAdapter(skill, true, true);
