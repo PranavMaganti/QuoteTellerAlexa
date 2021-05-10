@@ -10,7 +10,7 @@
     "axios": "^0.21.1",
     "express": "^4.17.1",
     "firebase": "^7.15.3",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "movie-quotes": "^1.0.1",
     "quotes-go": "^1.0.5",
     "typescript": "^3.9.5"
